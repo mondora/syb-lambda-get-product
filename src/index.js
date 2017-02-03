@@ -6,8 +6,11 @@ exports.handler = function(event, context, callback) {
     console.log("Received event:", JSON.stringify(event, null, 2));
     console.log("Received context:", JSON.stringify(context, null, 2));
 
+    // if no SKU code on params, set to start-your-business sku
+    const sku = event.params.querystring.sku ? event.params.querystring.sku : "SKU-00000059";
+
     https.get({
-        hostname: "apisandbox-api.zuora.com",
+        hostname: event["stage-variables"].zuoraApiHost,
         path: "/rest/v1/catalog/products",
         headers: event["stage-variables"]
     }, res => {
@@ -19,7 +22,7 @@ exports.handler = function(event, context, callback) {
         res.on("end", () => {
             console.log("Received data:", rawData);
             const dataJson = JSON.parse(rawData);
-            callback(null, R.find(R.propEq("sku", "SKU-00000059"))(dataJson.products));
+            callback(null, R.find(R.propEq("sku", sku))(dataJson.products));
         });
 
     }).on("error", e => {
