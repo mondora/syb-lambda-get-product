@@ -10,8 +10,8 @@ exports.handler = function(event, context, callback) {
     const sku = event.params.querystring.sku ? event.params.querystring.sku : "SKU-00000059";
 
     https.get({
-        hostname: event["stage-variables"].zuoraApiHost,
-        path: "/rest/v1/catalog/products",
+        hostname: `rest.${event["stage-variables"].zuoraHost}`,
+        path: "/v1/catalog/products",
         headers: event["stage-variables"]
     }, res => {
 
